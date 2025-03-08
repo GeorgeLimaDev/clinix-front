@@ -43,11 +43,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const ListagemConsultas = () => {
     const theme = useTheme();
 
-    const [consultas, setConsultas] = useState<Consulta[]>([
-        { id: 1, medico: { nome: 'Dr. João' } as Medico, horario: '2024-11-10T10:00:00', reservado: false, paciente: { nome: 'Maria' } as Paciente },
-        { id: 2, medico: { nome: 'Dra. Ana' } as Medico, horario: '2024-11-11T14:30:00', reservado: true, paciente: { nome: 'Carlos' } as Paciente },
-        { id: 3, medico: { nome: 'Dr. Pedro' } as Medico, horario: '2024-11-12T09:00:00', reservado: false, paciente: { nome: 'Sofia' } as Paciente },
-    ]);
+    const [consultas, setConsultas] = useState<Consulta[]>([]);
     const [openEdit, setOpenEdit] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
     const [consultaEdit, setConsultaEdit] = useState<Consulta | null>(null);
@@ -62,13 +58,12 @@ const ListagemConsultas = () => {
     const [selectedConsulta, setSelectedConsulta] = useState<Consulta | null>(null);
 
     useEffect(() => {
-        //Removido para usar os dados mockados
-        // fetch(LIST_AGENDAMENTO())
-        //     .then((response) => response.json())
-        //     .then((data) => {
-        //         setConsultas(data);
-        //     })
-        //     .catch((error) => console.error("Erro ao buscar Consultas:", error));
+        fetch(LIST_AGENDAMENTO())
+            .then((response) => response.json())
+            .then((data) => {
+                setConsultas(Array.isArray(data) ? data : []);
+            })
+            .catch((error) => console.error("Erro ao buscar Consultas:", error));
     }, []);
 
 
@@ -249,10 +244,11 @@ const ListagemConsultas = () => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>Id</TableCell>
+                                <TableCell>Data/Hora</TableCell>
                                 <TableCell>Médico</TableCell>
-                                <TableCell>Horário</TableCell>
-                                <TableCell>Reservado</TableCell>
                                 <TableCell>Paciente</TableCell>
+                                <TableCell>Clínica</TableCell>
+                                <TableCell>Status</TableCell>
                                 <TableCell align="right">Ações</TableCell>
                             </TableRow>
                         </TableHead>
@@ -260,10 +256,11 @@ const ListagemConsultas = () => {
                             {consultas.map((consulta) => (
                                  <StyledTableRow key={consulta.id} onClick={() => handleOpenDetails(consulta)}>
                                     <TableCell>{consulta.id}</TableCell>
-                                    <TableCell>{consulta.medico.nome}</TableCell>
-                                    <TableCell>{consulta.horario}</TableCell>
-                                    <TableCell>{consulta.reservado ? "Sim" : "Não"}</TableCell>
-                                    <TableCell>{consulta.paciente.nome}</TableCell>
+                                    <TableCell>{consulta.dateTime}</TableCell>
+                                    <TableCell>{consulta.doctorName}</TableCell>
+                                    <TableCell>{consulta.patientName}</TableCell>
+                                    <TableCell>{consulta.clinicName}</TableCell>
+                                    <TableCell>{consulta.status}</TableCell>
                                     <TableCell align="right">
                                         <IconButton
                                             onClick={(e) => {
